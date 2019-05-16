@@ -22,7 +22,7 @@ the end of the world.
 Nothing in the rest of
 this paragraph needs to
 be changed. Things can
-be added after it.
+be added after it. 
 
 This pragraph contains
 important new additions
