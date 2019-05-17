@@ -163,7 +163,7 @@ int main(int argc, const char * argv[]) {
       if(showsidebyside){
       	para_printdiffs(p, q, printdifs);
       }
-      if(para_diff(p,q) == 0){
+      else{
 	para_printdiff(p, q, printdif);
       }
       p = para_next(p);

@@ -69,17 +69,6 @@ int para_equal(para* p, para* q) {
   return 1;
 }
 
-int para_diff(para* p, para* q) {
-  int i = p->start, j = q->start, equal = 0;
-  while ((equal = strcmp(p->base[i], q->base[i])) == 0) {
-    ++i; ++j;
-  }
-  if(strcmp(p->base[i], q->base[i]) != 0){
-    return 0;
-  }
-  return 1;
-}
-
 void para_print(para* p, void (*fp)(const char*)) {
   if (p == NULL) { return; }
   for (int i = p->start; i <= p->stop && i != p->filesize; ++i) { fp(p->base[i]); }
