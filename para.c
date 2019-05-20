@@ -69,9 +69,15 @@ int para_equal(para* p, para* q) {
   return 1;
 }
 
-void para_print(para* p, void (*fp)(const char*)) {
-  if (p == NULL) { return; }
-  for (int i = p->start; i <= p->stop && i != p->filesize; ++i) { fp(p->base[i]); }
+void para_print(para* p, para* q, void (*fp)(const char*, const char*)) {
+  if (p == NULL && q == NULL) { return; }
+  if(q == NULL){
+    for (int i = p->start; i <= p->stop && i != p->filesize; ++i) { fp(p->base[i], NULL); }
+  }
+  else{
+    int j = q->start;
+    for (int i = p->start; i <= p->stop && i != p->filesize; ++i, ++j) { fp(p->base[i], q->base[j]); }
+  }
 }
 
 void para_printdiffs(para* p, para* q, void (*fp)(const char*, const char*)) {
@@ -95,10 +101,10 @@ void para_printdiff(const para* p, const para* q, void (*fp)(const char*, const 
   return;
 }
 
-void para_printfile(char* base[], int count, void (*fp)(const char*)) {
+void para_printfile(char* base[], int count, void (*fp)(const char*, const char*)) {
   para* p = para_first(base, count);
   while (p != NULL) {
-    para_print(p, fp);
+    para_print(p, NULL, fp);
     p = para_next(p);
   }
   printline();

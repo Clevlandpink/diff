@@ -30,7 +30,7 @@ void version(void) {
   printf("You may redistribute copies of this program\n");
   printf("under the terms of the GNU General Public License.\n");
   printf("For more information about these matters, see the file named COPYING.\n");
-  printf("Written by William McCarthy, Tony Stark, Idean Saghatchi,  and Dr. Steven Strange\n");
+  printf("Written by William McCarthy, Tony Stark, Idean Saghatchi, and Dr. Steven Strange\n");
 }
 
 void todo_list(void) {
@@ -134,49 +134,95 @@ void init_options_files(int argc, const char* argv[]) {
   loadfiles(files[0], files[1]);
 }
 
+void printsidebyside(void) {
+  para *p = para_first(strings1, count1);
+  para *q = para_first(strings2, count2);
 
-int main(int argc, const char * argv[]) {
-  init_options_files(--argc, ++argv);
-
-  // para_printfile(strings1, count1, printleft);
-  // para_printfile(strings2, count2, printright);
-  
-  para* p = para_first(strings1, count1);
-  para* q = para_first(strings2, count2);
   int foundmatch = 0;
 
-  para* qlast = q;
+  para *qlast = q;
+
   while (p != NULL) {
     qlast = q;
     foundmatch = 0;
+    
     while (q != NULL && (foundmatch = para_equal(p, q)) == 0) {
       q = para_next(q);
     }
+
     q = qlast;
 
     if (foundmatch) {
       while ((foundmatch = para_equal(p, q)) == 0) {
-        para_print(q, printright);
+	if(diffnormal){para_print(q, NULL, printra);}
+	else{para_print(q, NULL, printright);}
         q = para_next(q);
         qlast = q;
       }
-      if(showsidebyside){
-      	para_printdiffs(p, q, printdifs);
-      }
-      else{
-	para_printdiff(p, q, printdif);
-      }
+      if(diffnormal){ para_print(p, q, printdif);}
+      else if(showleftcolumn || (showleftcolumn && showsidebyside)){ para_print(p, q, printleftcol);}
+      else if(suppresscommon){para_print(p, q, suppresscommonline);}
+      else{para_print(p, q, printboth);}
       p = para_next(p);
       q = para_next(q);
-    } else {
-      para_print(p, printleft);
+    }
+    else {
+      if(diffnormal){para_print(p, NULL, printla);}
+      else{para_print(p, NULL, printleft);}
       p = para_next(p);
     }
   }
+
   while (q != NULL) {
-    para_print(q, printright);
+    if(diffnormal){para_print(q, NULL, printra);}
+    else{para_print(q, NULL, printright);}
     q = para_next(q);
   }
+}
+
+
+int main(int argc, const char * argv[]) {
+  init_options_files(--argc, ++argv);
+  printsidebyside();
+  // para_printfile(strings1, count1, printleft);
+  // para_printfile(strings2, count2, printright);
+  
+  /* para* p = para_first(strings1, count1); */
+  /* para* q = para_first(strings2, count2); */
+  /* int foundmatch = 0; */
+
+  /* para* qlast = q; */
+  /* while (p != NULL) { */
+  /*   qlast = q; */
+  /*   foundmatch = 0; */
+  /*   while (q != NULL && (foundmatch = para_equal(p, q)) == 0) { */
+  /*     q = para_next(q); */
+  /*   } */
+  /*   q = qlast; */
+
+  /*   if (foundmatch) { */
+  /*     while ((foundmatch = para_equal(p, q)) == 0) { */
+  /*       para_print(q, NULL,  printright); */
+  /*       q = para_next(q); */
+  /*       qlast = q; */
+  /*     } */
+  /*     if(showsidebyside){ */
+  /*     	para_printdiffs(p, q, printdifs); */
+  /*     } */
+  /*     else{ */
+  /* 	para_printdiff(p, q, printdif); */
+  /*     } */
+  /*     p = para_next(p); */
+  /*     q = para_next(q); */
+  /*   } else { */
+  /*     para_print(p, NULL,  printleft); */
+  /*     p = para_next(p); */
+  /*   } */
+  /* } */
+  /* while (q != NULL) { */
+  /*   para_print(q, NULL,  printright); */
+  /*   q = para_next(q); */
+  /* } */
 
   return 0;
 }

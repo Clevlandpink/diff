@@ -29,10 +29,10 @@ size_t para_size(para* p);
 char** para_base(para* p);
 char* para_info(para* p);
 int   para_equal(para* p, para* q);
-void para_print(para* p, void (*fp)(const char*));
+void para_print(para* p, para* q, void (*fp)(const char*, const char*));
 void para_printdiff(const para* p, const para* q, void (*fp)(const char*, const char*));
 void para_printdiffs(para* p, para* q, void (*fp)(const char*, const char*));
-void para_printfile(char* base[], int count, void (*fp)(const char*));
+void para_printfile(char* base[], int count, void (*fp)(const char*, const char*));
 
 
 #endif /* para_h */

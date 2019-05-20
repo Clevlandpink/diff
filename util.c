@@ -27,7 +27,8 @@ void printline(void) {
 }
 
 
-void printleft(const char* left) {
+void printleft(const char* left, const char* left2) {
+  if(left == NULL){left = left2;}
   char buf[BUFLEN];
   
   strcpy(buf, left);
@@ -38,17 +39,81 @@ void printleft(const char* left) {
   printf("%s\n", buf);
 }
 
-void printright(const char* right) {
-  if (right == NULL) { return; }
+void printleftcol(const char* left, const char* right){
+  if(left == NULL || right == NULL) {return;}
+  char buf[BUFLEN], buf2[BUFLEN];
+  
+  strcpy(buf, left);
+  strcpy(buf2, left);
+
+  if(strcmp(left, right) == 0){  
+    int j = 0, len = (int)strlen(buf) - 1;
+    for (j = 0; j <= 48 - len ; ++j) { buf[len + j] = ' ';}
+    buf[len + j++] = '(';
+    buf[len + j++] = '\0';
+
+    for(int i = 0; i < (int)strlen(buf2) - 1; ++i){
+      buf2[i] = ' ';
+    }
+    printf("%-50s %s", buf, buf2);
+  }
+  else{
+    int j = 0, len = (int)strlen(buf) - 1;
+    for (j = 0; j <= 47 - len ; ++j) { buf[len + j] = ' ';}
+    buf[len + j++] = '\0';
+    printf("%-47s | %s", buf, buf2);
+  }
+  
+}
+
+void suppresscommonline(const char* left, const char* right){
+  if(left == NULL || right == NULL) {return;}
+  char buf[BUFLEN], buf2[BUFLEN];
+  
+  strcpy(buf, left);
+  strcpy(buf2, left);
+
+  if(strcmp(left, right) == 0){
+    return;
+  }
+  else{
+    int j = 0, len = (int)strlen(buf) - 1;
+    for (j = 0; j <= 47 - len ; ++j) { buf[len + j] = ' ';}
+    buf[len + j++] = '\0';
+    printf("%-47s | %s", buf, buf2);
+  }
+  
+}
+
+void printright(const char* right, const char* right2) {
+  if (right == NULL && right2 == NULL) { return; }
+  else if(right == NULL){right = right2;}
   printf("%50s %s", ">", right);
 }
 
-void printboth(const char* left_right) {
+void printra(const char* right, const char* right2) {
+  if (right == NULL && right2 == NULL) { return; }
+  else if(right == NULL){right = right2;}
+  printf("%s %s", ">", right);
+}
+
+void printla(const char* right, const char* right2) {
+  if (right == NULL && right2 == NULL) { return; }
+  else if(right == NULL){right = right2;}
+  printf("%s %s", "<", right);
+}
+
+void printboth(const char* left, const char *right) {
   char buf[BUFLEN];
-  size_t len = strlen(left_right);
-  if (len > 0) { strncpy(buf, left_right, len); }
+  size_t len = strlen(left);
+  if (len > 0) { strncpy(buf, left, len); }
   buf[len - 1] = '\0';
-  printf("%-50s %s", buf, left_right);
+  if(strcmp(left, right) == 0){
+    printf("%-50s %s", buf, right);
+  }
+  else{
+    printf("%-48s | %s", buf, right);
+  }
 }
 
 void printdifs(const char* p, const char* q) {
@@ -59,7 +124,19 @@ void printdifs(const char* p, const char* q) {
   printf("%-50s %s", buf, q);
 }
 
-void printdif(const char*p, const char* q){
-  printf("< %s\n> %s", p, q);
+void printdif(const char* left, const char* right){
+  if(left == NULL || right == NULL) {return;}
+  char buf[BUFLEN], buf2[BUFLEN];
+  
+  strcpy(buf, left);
+  strcpy(buf2, left);
+
+  if(strcmp(left, right) == 0){
+    return;
+  }
+  else{
+    printf("< %s\n> %s>\n", left, right);
+  }
+  
 }
 
