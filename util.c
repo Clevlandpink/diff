@@ -116,14 +116,6 @@ void printboth(const char* left, const char *right) {
   }
 }
 
-void printdifs(const char* p, const char* q) {
-  char buf[BUFLEN];
-  size_t len = strlen(p);
-  if (len > 0) { strncpy(buf, p, len); }
-  buf[len - 1] = '\0';
-  printf("%-50s %s", buf, q);
-}
-
 void printdif(const char* left, const char* right){
   if(left == NULL || right == NULL) {return;}
   char buf[BUFLEN], buf2[BUFLEN];
@@ -135,7 +127,7 @@ void printdif(const char* left, const char* right){
     return;
   }
   else{
-    printf("< %s\n> %s>\n", left, right);
+    printf("< %s---\n %s>\n", left, right);
   }
   
 }

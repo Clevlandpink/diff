@@ -19,9 +19,11 @@
 
 #define HASHLEN 200
 
-#include "para.c"
-#include "util.c"
+#include "diff.h"
+#include "para.h"
+#include "util.h"
 
+char fn1[BUFLEN], fn2[BUFLEN];
 
 void version(void) {
   printf("\n\n\ndiff (CSUF diffutils) 1.0.0\n");
@@ -33,12 +35,6 @@ void version(void) {
   printf("Written by William McCarthy, Tony Stark, Idean Saghatchi, and Dr. Steven Strange\n");
 }
 
-void todo_list(void) {
-  printf("\n\n\nTODO: check line by line in a paragraph, using '|' for differences");
-  printf("\nTODO: this starter code does not yet handle printing all of fin1's paragraphs.");
-  printf("\nTODO: handle the rest of diff's options\n");
-}
-
 char buf[BUFLEN];
 char *strings1[MAXSTRINGS], *strings2[MAXSTRINGS];
 int showversion = 0, showbrief = 0, ignorecase = 0, report_identical = 0, showsidebyside = 0;
@@ -48,15 +44,25 @@ int count1 = 0, count2 = 0;
 
 
 void loadfiles(const char* filename1, const char* filename2) {
+  char *p1;
+  const char *p2;
   memset(buf, 0, sizeof(buf));
   memset(strings1, 0, sizeof(strings1));
   memset(strings2, 0, sizeof(strings2));
+
+  
+  p1 = fn1; p2 = filename1;
+  while((*p1++ = *p2++)){}
+  p1 = fn2; p2 = filename2;
+  while((*p1++ = *p2++)){}
   
   FILE *fin1 = openfile(filename1, "r");
   FILE *fin2 = openfile(filename2, "r");
   
   while (!feof(fin1) && fgets(buf, BUFLEN, fin1) != NULL) { strings1[count1++] = strdup(buf); }  fclose(fin1);
   while (!feof(fin2) && fgets(buf, BUFLEN, fin2) != NULL) { strings2[count2++] = strdup(buf); }  fclose(fin2);
+
+  
 }
 
 void print_option(const char* name, int value) { printf("%17s: %s\n", name, yesorno(value)); }
@@ -134,7 +140,10 @@ void init_options_files(int argc, const char* argv[]) {
   loadfiles(files[0], files[1]);
 }
 
-void printsidebyside(void) {
+
+int main(int argc, const char * argv[]) {
+  init_options_files(--argc, ++argv);
+  int dif = 0;
   para *p = para_first(strings1, count1);
   para *q = para_first(strings2, count2);
 
@@ -148,12 +157,18 @@ void printsidebyside(void) {
     
     while (q != NULL && (foundmatch = para_equal(p, q)) == 0) {
       q = para_next(q);
+      dif = 1;
+      if(showbrief){
+	printf("Files %s and %s differ\n", fn1, fn2);
+	exit(0);
+      }
     }
 
     q = qlast;
 
     if (foundmatch) {
       while ((foundmatch = para_equal(p, q)) == 0) {
+	dif = 1;
 	if(diffnormal){para_print(q, NULL, printra);}
 	else{para_print(q, NULL, printright);}
         q = para_next(q);
@@ -178,51 +193,7 @@ void printsidebyside(void) {
     else{para_print(q, NULL, printright);}
     q = para_next(q);
   }
-}
-
-
-int main(int argc, const char * argv[]) {
-  init_options_files(--argc, ++argv);
-  printsidebyside();
-  // para_printfile(strings1, count1, printleft);
-  // para_printfile(strings2, count2, printright);
-  
-  /* para* p = para_first(strings1, count1); */
-  /* para* q = para_first(strings2, count2); */
-  /* int foundmatch = 0; */
-
-  /* para* qlast = q; */
-  /* while (p != NULL) { */
-  /*   qlast = q; */
-  /*   foundmatch = 0; */
-  /*   while (q != NULL && (foundmatch = para_equal(p, q)) == 0) { */
-  /*     q = para_next(q); */
-  /*   } */
-  /*   q = qlast; */
-
-  /*   if (foundmatch) { */
-  /*     while ((foundmatch = para_equal(p, q)) == 0) { */
-  /*       para_print(q, NULL,  printright); */
-  /*       q = para_next(q); */
-  /*       qlast = q; */
-  /*     } */
-  /*     if(showsidebyside){ */
-  /*     	para_printdiffs(p, q, printdifs); */
-  /*     } */
-  /*     else{ */
-  /* 	para_printdiff(p, q, printdif); */
-  /*     } */
-  /*     p = para_next(p); */
-  /*     q = para_next(q); */
-  /*   } else { */
-  /*     para_print(p, NULL,  printleft); */
-  /*     p = para_next(p); */
-  /*   } */
-  /* } */
-  /* while (q != NULL) { */
-  /*   para_print(q, NULL,  printright); */
-  /*   q = para_next(q); */
-  /* } */
-
+  if(dif == 0 && report_identical){ printf("Files %s and %s are identical.\n", fn1, fn2);}
+ 
   return 0;
 }

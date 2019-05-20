@@ -65,7 +65,7 @@ int para_equal(para* p, para* q) {
   if (para_size(p) != para_size(q)) { return 0; }
   if (p->start >= p->filesize || q->start >= q->filesize) { return 0; }
   int i = p->start, j = q->start, equal = 0;
-  while ((equal = strcmp(p->base[i], q->base[i])) == 0) { ++i; ++j; }
+  while ((equal = strcmp(p->base[i], q->base[i])) == 0 && i <= (int)para_size(p) && j <= (int)para_size(q)) { ++i; ++j; }
   return 1;
 }
 
@@ -78,27 +78,6 @@ void para_print(para* p, para* q, void (*fp)(const char*, const char*)) {
     int j = q->start;
     for (int i = p->start; i <= p->stop && i != p->filesize; ++i, ++j) { fp(p->base[i], q->base[j]); }
   }
-}
-
-void para_printdiffs(para* p, para* q, void (*fp)(const char*, const char*)) {
-  if (p == NULL || q == NULL) { return; }
-  int j = q->start;
-  for (int i = p->start; i <= p->stop && i != p->filesize; ++i, ++j) {
-    fp(p->base[i], q->base[j]);
-  }
-}
-
-void para_printdiff(const para* p, const para* q, void (*fp)(const char*, const char*)) {
-  char *b1[BUFLEN], *b2[BUFLEN];
-  int c1 = 0, c2 = 0;
-  int i = p->start, j = q->start, equal = 0;
-  while ((equal = strcmp(p->base[i], q->base[j])) == 0) { ++i; ++j; }
-  while (q->base[i] != NULL && p->base[i] != NULL && (equal = strcmp(p->base[i], q->base[j])) != 0) {
-    b1[c1] = p->base[i]; b2[c2] = q->base[j];
-    ++i; ++j; ++c1; ++c2;
-  }
-  fp(*b1, *b2);
-  return;
 }
 
 void para_printfile(char* base[], int count, void (*fp)(const char*, const char*)) {

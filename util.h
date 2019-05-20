@@ -19,7 +19,10 @@ void printleft(const char* left, const char* left2);
 void printright(const char* right, const char* right2);
 void printboth(const char* left, const char* right);
 void printdif(const char* p, const char* q);
-
+void printleftcol(const char* left, const char* right);
 void printline(void);
+void suppresscommonline(const char* left, const char* right);
+void printra(const char* right, const char* right2);
+void printla(const char* right, const char* right2);
 
 #endif /* util_h */
